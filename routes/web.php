@@ -19,10 +19,10 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/recipe', 'RecipeController@all')->name('recipe');
-Route::post('/recipe', 'RecipeController@create')->name('recipe-new');
-Route::delete('/recipe', 'RecipeController@delete')->name('recipe-delete');
+Route::get('/recipe', 'RecipeController@all');
+Route::post('/recipe', 'RecipeController@create');
+Route::delete('/recipe', 'RecipeController@delete');
 
-Route::get('/ingredient', 'IngredientController@all')->name('ingredient');
-Route::post('/ingredient', 'IngredientController@create')->name('ingredient-new');
-Route::delete('/ingredient', 'IngredientController@delete')->name('ingredient-delete');
+Route::get('/ingredient', 'IngredientController@all');
+Route::post('/ingredient', 'IngredientController@create');
+Route::delete('/ingredient/{ingredient}', 'IngredientController@delete');

@@ -11,6 +11,12 @@
                     You are logged in!
                 </div>
             </div>
+            <div class="content">
+                <div class="links">
+                    <a href="{{ url('/recipe') }}">Recipes</a>
+                    <a href="{{ url('/ingredient') }}">Ingredients</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

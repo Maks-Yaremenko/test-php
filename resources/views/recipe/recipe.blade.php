@@ -1,92 +1,107 @@
-<!doctype html>
-<html lang="{{ config('app.locale') }}">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+<!-- resources/views/ingredient/ingredient.blade.php -->
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+@extends('layouts.app')
 
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Raleway', sans-serif;
-                font-weight: 100;
-                height: 100vh;
-                margin: 0;
-            }
+@section('content')
 
-            .full-height {
-                height: 100vh;
-            }
+<!-- Bootstrap шаблон... -->
 
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
+<div class="panel-body">
+    <!-- Отображение ошибок проверки ввода -->
+    @include('common.errors') 
+    <!-- Форма новой задачи -->
+    <form action="{{ url('/recipe') }}" method="POST" class="form-horizontal">
+        {{ csrf_field() }}
 
-            .position-ref {
-                position: relative;
-            }
-
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .title {
-                font-size: 84px;
-            }
-
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @if (Auth::check())
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ url('/login') }}">Login</a>
-                        <a href="{{ url('/register') }}">Register</a>
-                    @endif
-                </div>
-            @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Recipe Page
-                </div>
-
-                <div class="links">
-                    <a href="{{ url('/home') }}">Home</a>
-                    <a href="{{ url('/ingredient') }}">Ingredients</a>
-                </div>
+        <!-- Имя задачи -->
+        <div class="form-group">
+            <label for="ingredient-name" class="col-sm-3 control-label">Рецепт</label>
+            <div class="col-sm-6">
+                <input type="text" name="name" id="recipe-name" class="form-control">
             </div>
         </div>
-    </body>
-</html>
+        <div class="form-group">
+            <label for="ingredient-name" class="col-sm-3 control-label">Описание</label>
+            <div class="col-sm-6">
+                <input type="text" name="description" id="recipe-description" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ingredient[]" class="col-sm-3 control-label">Ингредиент 1</label>
+            <div class="col-sm-6">
+                <input type="text" name="ingredient[]" id="ingredient-name" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ingredient[]" class="col-sm-3 control-label">Ингредиент 2</label>
+            <div class="col-sm-6">
+                <input type="text" name="ingredient[]" id="ingredient-name" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ingredient[]" class="col-sm-3 control-label">Ингредиент 3</label>
+            <div class="col-sm-6">
+                <input type="text" name="ingredient[]" id="ingredient-name" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ingredient[]" class="col-sm-3 control-label">Ингредиент 4</label>
+            <div class="col-sm-6">
+                <input type="text" name="ingredient[]" id="ingredient-name" class="form-control">
+            </div>
+        </div>
+
+        <!-- Кнопка добавления задачи -->
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-6">
+                <button type="submit" class="btn btn-default">
+                    <i class="fa fa-plus"></i> Добавить рецепт
+                </button>
+            </div>
+        </div>
+    </form>
+    <!-- Текущие задачи -->
+    @if (count($recipes) > 0)
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <table class="table table-striped ingredient-table">
+
+            <!-- Заголовок таблицы -->
+            <thead>
+            <th>Рецепты</th>
+            <th>&nbsp;</th>
+            </thead>
+
+            <!-- Тело таблицы -->
+                <tbody>
+                    @foreach ($recipes as $recipe)
+                    <tr>
+                        <!-- Имя задачи -->
+                        <td class="table-text">
+                            <div>{{ $recipe->name }}</div>
+                        </td>
+                        <td class="table-text">
+                            <div>{{ $recipe->description }}</div>
+                        </td>
+                        <td>
+                        <!-- Кнопка Удалить -->
+                            <form action="{{ url('recipe/'.$recipe->id) }}" method="POST">
+                            {{ csrf_field() }}
+                            {{ method_field('DELETE') }}
+
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fa fa-trash"></i> Удалить
+                            </button>
+                            </form>                  
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @endif
+
+</div>
+@endsection

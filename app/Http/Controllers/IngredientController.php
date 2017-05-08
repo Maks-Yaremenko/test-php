@@ -2,37 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use App\Ingredient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class IngredientController extends Controller
 {
     /**
-     * Show the application dashboard.
+     * Show all available ingredients.
      *
      * @return \Illuminate\Http\Response
      */
     public function all()
     {
-        return view('ingredient/ingredient');
+        $ingredients = Ingredient::orderBy('created_at', 'asc')->get();
+
+        return view('ingredient/ingredient', [
+            'ingredients' => $ingredients
+        ]);
     }
 
-        /**
-     * Show the application dashboard.
+     /**
+     * Create new ingredient.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        return view('home');
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:20',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('/ingredient')
+                ->withInput()
+                ->withErrors($validator);
+        }
+
+        $ingredient = new Ingredient;
+        $ingredient->name = $request->name;
+        $ingredient->save();
+
+        return redirect('/ingredient');
+
+    // создание задачи
     }
 
-        /**
-     * Show the application dashboard.
+     /**
+     * Delete existing ingredient.
      *
      * @return \Illuminate\Http\Response
      */
-    public function delete()
+    public function delete(Ingredient $ingredient)
     {
-        return view('home');
+        $ingredient->delete();
+
+        return redirect('/ingredient');
     }
+    
 }
