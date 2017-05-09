@@ -17,6 +17,7 @@
     <!-- Форма новой задачи -->
     <form action="{{ url('/recipe') }}" method="POST" class="row">
         {{ csrf_field() }}
+        <example></example>
         <h2>Add Recipe</h2>
         <!-- Имя задачи -->
         <div class="form-group row">
