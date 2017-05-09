@@ -44,21 +44,11 @@ class RecipeController extends Controller
         $recipe->name = $request->name;
         $recipe->description = $request->description;
         $recipe->save();
-        $ingredient = [];
-        foreach ($request->get('ingredient') as $ingredient) {
-            array_push($ingredient, new IngredientRecipe([
-                'recipe_id' => $recipe->id,
-                'ingredient_id' => $ingredient->id
-            ]));
-        }
 
-        $ingRec = new IngredientRecipe($id_rec, $ing1);
 
-        $ingRec->recipe_id = $recipe->id;
-        $ingRec->ingredient_id = $ingredient->id;
-        $ingRec->save();
+        $recipe->ingredients()->attach([1,3,4]);
 
-        return view('recipe/recipe');
+        return redirect('/recipe');
     }
 
      /**
@@ -66,9 +56,11 @@ class RecipeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function delete()
+    public function delete(Recipe $recipe)
     {
-        return view('home');
+        $recipe->delete();
+
+        return redirect('/recipe');
     }
 
 }

@@ -21,7 +21,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/recipe', 'RecipeController@all');
 Route::post('/recipe', 'RecipeController@create');
-Route::delete('/recipe', 'RecipeController@delete');
+Route::delete('/recipe/{recipe}', 'RecipeController@delete');
 
 Route::get('/ingredient', 'IngredientController@all');
 Route::post('/ingredient', 'IngredientController@create');

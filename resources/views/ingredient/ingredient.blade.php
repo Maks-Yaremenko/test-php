@@ -3,11 +3,15 @@
 
 @extends('layouts.app')
 
+@section('sidebar')
+    @include('sidebar')
+@endsection
+
 @section('content')
 
 <!-- Bootstrap шаблон... -->
 
-<div class="panel-body">
+<div class="col-md-9">
     <!-- Отображение ошибок проверки ввода -->
     @include('common.errors') 
     <!-- Форма новой задачи -->
@@ -16,31 +20,29 @@
 
         <!-- Имя задачи -->
         <div class="form-group">
-            <label for="ingredient-name" class="col-sm-3 control-label">Ингредиент</label>
+            <label class="col-sm-2" for="ingredient-name" >Ingredient</label>
 
-            <div class="col-sm-6">
-                <input type="text" name="name" id="ingredient-name" class="form-control">
+            <div class="col-sm-7">
+                <input class="form-control" type="text" name="name" id="ingredient-name" >
             </div>
-        </div>
-
-        <!-- Кнопка добавления задачи -->
-        <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-6">
-                <button type="submit" class="btn btn-default">
-                    <i class="fa fa-plus"></i> Добавить ингредиент
+            <div class=" col-sm-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-plus"></i> Add ingredient
                 </button>
             </div>
         </div>
     </form>
+    <hr align="center" width="90%" color="gray"/>
     <!-- Текущие задачи -->
     @if (count($ingredients) > 0)
     <div class="panel panel-default">
         <div class="panel-body">
-            <table class="table table-striped ingredient-table">
+            <table class="table table-striped table-hover">
 
             <!-- Заголовок таблицы -->
             <thead>
-            <th>Ингредиенты</th>
+                <th class="col-md-10">Ingredients</th>
+                <th class="col-md-2">Actions</th> 
             <th>&nbsp;</th>
             </thead>
 
@@ -49,17 +51,21 @@
                     @foreach ($ingredients as $ingredient)
                     <tr>
                         <!-- Имя задачи -->
-                        <td class="table-text">
+                        <td class="col-md-10">
                             <div>{{ $ingredient->name }}</div>
                         </td>
-                        <td>
+
+                        <td class="col-md-2">
                         <!-- Кнопка Удалить -->
                             <form action="{{ url('ingredient/'.$ingredient->id) }}" method="POST">
                             {{ csrf_field() }}
                             {{ method_field('DELETE') }}
 
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fa fa-trash"></i> Удалить
+                            <button type="submit" class="btn btn-link">
+                                <i class="material-icons">edit</i>
+                            </button>
+                            <button type="submit" class="btn btn-link">
+                                <i class="material-icons">delete</i>
                             </button>
                             </form>                  
                         </td>

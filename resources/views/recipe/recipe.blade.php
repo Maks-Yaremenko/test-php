@@ -3,60 +3,66 @@
 
 @extends('layouts.app')
 
+@section('sidebar')
+    @include('sidebar')
+@endsection
+
 @section('content')
 
 <!-- Bootstrap шаблон... -->
 
-<div class="panel-body">
+<div class="col-md-9">
     <!-- Отображение ошибок проверки ввода -->
     @include('common.errors') 
     <!-- Форма новой задачи -->
-    <form action="{{ url('/recipe') }}" method="POST" class="form-horizontal">
+    <form action="{{ url('/recipe') }}" method="POST" class="row">
         {{ csrf_field() }}
-
+        <h2>Add Recipe</h2>
         <!-- Имя задачи -->
-        <div class="form-group">
-            <label for="ingredient-name" class="col-sm-3 control-label">Рецепт</label>
-            <div class="col-sm-6">
+        <div class="form-group row">
+            <label for="name" class="col-sm-3 control-label">Name</label>
+            <div class="col-sm-4">
                 <input type="text" name="name" id="recipe-name" class="form-control">
             </div>
         </div>
-        <div class="form-group">
-            <label for="ingredient-name" class="col-sm-3 control-label">Описание</label>
-            <div class="col-sm-6">
-                <input type="text" name="description" id="recipe-description" class="form-control">
+        <div class="form-group row">
+            <label for="description" class="col-sm-3 control-label">Description</label>
+            <div class="col-sm-8">
+                <textarea rows="5" name="description" id="recipe-description" class="form-control"></textarea>
             </div>
         </div>
-        <div class="form-group">
-            <label for="ingredient[]" class="col-sm-3 control-label">Ингредиент 1</label>
-            <div class="col-sm-6">
-                <input type="text" name="ingredient[]" id="ingredient-name" class="form-control">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="ingredient[]" class="col-sm-3 control-label">Ингредиент 2</label>
-            <div class="col-sm-6">
-                <input type="text" name="ingredient[]" id="ingredient-name" class="form-control">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="ingredient[]" class="col-sm-3 control-label">Ингредиент 3</label>
-            <div class="col-sm-6">
-                <input type="text" name="ingredient[]" id="ingredient-name" class="form-control">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="ingredient[]" class="col-sm-3 control-label">Ингредиент 4</label>
-            <div class="col-sm-6">
-                <input type="text" name="ingredient[]" id="ingredient-name" class="form-control">
-            </div>
-        </div>
+        <hr align="center" width="90%" color="gray"/>
 
+        <div class="col-sm-8">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <th>Ingredient</th>
+                    <th>Amount</th> 
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" name="ingredient[]" id="ingredient-name" class="form-control">
+                        </td>
+                        <td>
+                            <input type="text" name="ingredient[]" id="ingredient-amount" class="form-control">
+                        </td>
+                    </tr>
+                    <tfoot>
+                    <tr>
+                        <td colspan="2"><button on-click="addIngredientField($event)" class="btn btn-primary"> Add ingredient </button></td>
+                    </tr>
+                        
+                    </tfoot>
+                </tbody>
+            </table>
+        </div>
+        <hr align="center" width="90%" color="gray"/>
         <!-- Кнопка добавления задачи -->
         <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-6">
-                <button type="submit" class="btn btn-default">
-                    <i class="fa fa-plus"></i> Добавить рецепт
+            <div class="col-sm-offset-10 col-sm-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-plus"></i> Create recipe
                 </button>
             </div>
         </div>
