@@ -81,11 +81,12 @@
                 <div class="title m-b-md">
                     {{ config('app.name', 'Laravel') }}
                 </div>
-
-                <div class="links">
-                    <a href="{{ url('/recipe') }}">Recipes</a>
-                    <a href="{{ url('/ingredient') }}">Ingredients</a>
-                </div>
+                @if (Auth::check())
+                    <div class="links">
+                        <a href="{{ url('/recipe') }}">Recipes</a>
+                        <a href="{{ url('/ingredient') }}">Ingredients</a>
+                    </div>
+                @endif
             </div>
         </div>
     </body>
