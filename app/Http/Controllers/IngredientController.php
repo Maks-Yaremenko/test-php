@@ -22,6 +22,25 @@ class IngredientController extends Controller
         ]);
     }
 
+    /**
+     * Autocomplete method.
+     */
+    public function autocomplete(Request $request)
+    {
+        $ingredients = Ingredient::where('name', 'like', '%'.$request->get('term').'%')
+        ->orderBy('id', 'desc')
+        ->take(5)
+        ->get();
+
+        // convert to json
+        $results = [];
+        foreach ($ingredients as $ingredient) {
+            $results[] = ['id' => $ingredient->id, 'value' => $ingredient->name];
+        }
+
+        return response()->json($results);
+    }
+
      /**
      * Create new ingredient.
      *

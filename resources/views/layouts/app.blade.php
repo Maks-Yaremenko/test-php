@@ -13,6 +13,9 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    <link href="{{ asset('jqueryui/jquery-ui.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('jqueryui/jquery-ui.theme.min.css') }}" rel="stylesheet">
+
 
     <!-- Scripts -->
     <script>
@@ -90,5 +93,6 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('jqueryui/jquery-ui.js') }}"></script>
 </body>
 </html>

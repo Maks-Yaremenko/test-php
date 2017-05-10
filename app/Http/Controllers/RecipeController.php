@@ -22,6 +22,16 @@ class RecipeController extends Controller
         ]);
     }
 
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function make()
+    {
+        return view('recipe/recipe-new');
+    }
+
      /**
      * Show the application dashboard.
      *
@@ -45,6 +55,8 @@ class RecipeController extends Controller
         $recipe->description = $request->description;
         $recipe->save();
 
+
+        return;
 
         $recipe->ingredients()->attach([1,3,4]);
 

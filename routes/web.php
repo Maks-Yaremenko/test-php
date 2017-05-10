@@ -20,9 +20,11 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/recipe', 'RecipeController@all');
-Route::post('/recipe', 'RecipeController@create');
+Route::get('/recipe/new', 'RecipeController@make');
+Route::post('/recipe/new', 'RecipeController@create');
 Route::delete('/recipe/{recipe}', 'RecipeController@delete');
 
 Route::get('/ingredient', 'IngredientController@all');
+Route::get('/ingredient/autocomplete', 'IngredientController@autocomplete');
 Route::post('/ingredient', 'IngredientController@create');
 Route::delete('/ingredient/{ingredient}', 'IngredientController@delete');
