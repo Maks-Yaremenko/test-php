@@ -11,3 +11,7 @@
     text-decoration: none;
     text-transform: uppercase;
 }
+
+.inline-block {
+	display: inline-block;
+}

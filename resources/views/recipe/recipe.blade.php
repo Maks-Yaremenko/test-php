@@ -22,8 +22,8 @@
             <!-- Заголовок таблицы -->
             <thead>
             <th class="col-md-2">Recipes</th>
-            <th class="col-md-9">Description</th>
-            <th class="col-md-1">Actions</th>
+            <th class="col-md-8">Description</th>
+            <th class="col-md-2">Actions</th>
             <th>&nbsp;</th>
             </thead>
 
@@ -40,10 +40,10 @@
                         </td>
 
                         <td>
-                            <a href="{{ url('recipe/new') }}">
+                            <a class="btn btn-link" href="{{ url('recipe/new') }}">
                                 <i class="material-icons">exposure_plus_1</i>
                             </a>
-                            <form action="{{ url('recipe/'.$recipe->id) }}" method="POST">
+                            <form class="inline-block" action="{{ url('recipe/'.$recipe->id) }}" method="POST">
                                 {{ csrf_field() }}
                                 {{ method_field('DELETE') }}
 
