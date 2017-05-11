@@ -90,8 +90,6 @@ class IngredientController extends Controller
         $ingredient->save();
 
         return response($ingredient);
-
-    // создание задачи
     }
 
      /**

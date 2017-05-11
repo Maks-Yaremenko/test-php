@@ -22,8 +22,8 @@
             <!-- Заголовок таблицы -->
             <thead>
             <th class="col-md-2">Recipes</th>
-            <th class="col-md-8">Description</th>
-            <th class="col-md-2">Actions</th>
+            <th class="col-md-7">Description</th>
+            <th class="col-md-3">Actions</th>
             <th>&nbsp;</th>
             </thead>
 
@@ -40,6 +40,9 @@
                         </td>
 
                         <td>
+                            <a class="btn btn-link" href="{{ url('recipe/show/'.$recipe->id) }}">
+                                <i class="material-icons">visibility</i>
+                            </a>
                             <a class="btn btn-link" href="{{ url('recipe/new') }}">
                                 <i class="material-icons">exposure_plus_1</i>
                             </a>

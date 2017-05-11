@@ -55,23 +55,12 @@ class RecipeController extends Controller
         $recipe->description = $request->description;
         $recipe->save();
 
-        echo var_dump($request->ingredient);
-
-        
-
-        $ids = array_filter(array_map(array($this, 'executeId'), $request->ingredient));
-
-        echo print_r($ids);
-
-        return;
-
-        $recipe->ingredients()->attach([1,3,4]);
+        foreach($request->ingredient as $value){
+            if(is_null($value['id'])) { continue; }
+            $recipe ->ingredients()->attach($recipe->id, array('ingredient_id' => $value['id'], 'amount' => $value['amount']));
+        };
 
         return redirect('/recipe');
-    }
-
-    public function executeId ($value) {
-        return $value['id'];
     }
 
      /**
@@ -84,11 +73,6 @@ class RecipeController extends Controller
         $recipe->delete();
 
         return redirect('/recipe');
-    }
-
-    private function filter ($value) {
-        if (is_null($value)) { continue; }
-        return $value;
     }
 
 }
