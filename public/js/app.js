@@ -800,19 +800,23 @@ var app = new Vue({
 
 $(document).ready(function () {
 	field.initAutocomplete();
+	field.initActiveField();
+	field.initStoreIngredient();
 });
 
 $('#add-field').on('click', function () {
 
 	var row = $('#ingredients>tbody>tr').clone();
 
-	field.getElement(row, '.ingredient-id').setNextFieldNumber('id');
-	field.getElement(row, '.ingredient-name').resetValue().setNextFieldNumber('name');
-	field.getElement(row, '.ingredient-amount').resetValue().setNextFieldNumber('amount');
+	field.cleanElement(row, '.ingredient-id');
+	field.cleanElement(row, '.ingredient-name');
+	field.cleanElement(row, '.ingredient-amount');
 
 	$('#ingredients>tbody').append(row[0]);
 
 	field.initAutocomplete();
+	field.initActiveField();
+	field.initStoreIngredient();
 });
 
 $('#submit').on('click', function () {
@@ -821,46 +825,92 @@ $('#submit').on('click', function () {
 		url: '/recipe/new',
 		data: $("#recipe").serialize(),
 		success: function success(data) {
-			location.reload();
+			//location.reload();
 		}
 	});
 });
 
 var field = {
 
-	element: false,
 	counter: 1,
 
-	getElement: function getElement(target, fieldName) {
-
-		this.element = $(target).find(fieldName);
-		return this;
-	},
-
-	resetValue: function resetValue() {
-
-		this.element.val('');
-		return this;
-	},
-
-	setNextFieldNumber: function setNextFieldNumber(fieldName) {
-
-		this.element.attr('name', 'ingredient[' + this.counter + '][' + fieldName + ']');
-
-		if (fieldName === 'amount') {
+	cleanElement: function cleanElement(target, className) {
+		$(target).find(className).val('').attr('name', 'ingredient[' + this.counter + '][' + className.split('-')[1] + ']');
+		if (className.split('-')[1] === 'amount') {
 			this.counter++;
 		}
-		return this;
+	},
+
+	showAddButton: function showAddButton() {
+		$('.target.active').css('display', 'table');
+		$('.target.active > input').css({ 'border-radius': '4px 0 0 4px' });
+		$('.target.active .input-group-btn').css('display', 'table-cell');
+		$('#add-field').attr('disabled', '');
+	},
+
+	hideAddButton: function hideAddButton() {
+		$('.target.active').css({ 'display': 'block' });
+		$('.target.active > input').css({ 'border-radius': '4px' });
+		$('.target.active .input-group-btn').css({ 'display': 'none' });
+		$('#add-field').removeAttr('disabled');
+	},
+
+	hideButtonAfterStoreIngredient: function hideButtonAfterStoreIngredient() {
+		$('.target').css({ 'display': 'block' });
+		$('.target > input').css({ 'border-radius': '4px' });
+		$('.target .input-group-btn').css({ 'display': 'none' });
+		$('#add-field').removeAttr('disabled');
 	},
 
 	initAutocomplete: function initAutocomplete() {
+
+		var self = this;
+
 		$('.ingredient-name').on('focus', function () {
 			$(this).autocomplete({
 				source: '/ingredient/autocomplete',
 				minLength: 3,
 				select: function select(event, ui) {
+
 					$(this).val(ui.item.value);
 					$(this).siblings().val(ui.item.id);
+				},
+				response: function response(event, ui) {
+					if (ui.content.length) {
+						self.hideAddButton();
+						return false;
+					}
+
+					self.showAddButton();
+				}
+			});
+		});
+	},
+
+	initActiveField: function initActiveField() {
+		$('.ingredient-name').on('focus', function () {
+			$(this).parent().addClass('active');
+		}).on('blur', function () {
+			$(this).parent().removeClass('active');
+		});
+	},
+
+	initStoreIngredient: function initStoreIngredient() {
+		var parent = this;
+
+		$('.add-ingredient').on('click', function () {
+			var self = this;
+			var newIngredient = $(this).parent().siblings('.ingredient-name').val();
+
+			$.ajax({
+				type: 'POST',
+				url: '/ingredient/ajax',
+				data: { "name": newIngredient },
+				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+				success: function success(data) {
+					console.log('data', data);
+					$(self).parent().siblings('.ingredient-id').val(data.id);
+					parent.hideButtonAfterStoreIngredient();
 				}
 			});
 		});
@@ -31727,7 +31777,7 @@ var Component = __webpack_require__(36)(
   /* cssModules */
   null
 )
-Component.options.__file = "E:\\Workspace\\test-php\\resources\\assets\\js\\components\\Example.vue"
+Component.options.__file = "E:\\examples\\test_php\\resources\\assets\\js\\components\\Example.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Example.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -31738,9 +31788,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-3dffcbe9", Component.options)
+    hotAPI.createRecord("data-v-2fdb449b", Component.options)
   } else {
-    hotAPI.reload("data-v-3dffcbe9", Component.options)
+    hotAPI.reload("data-v-2fdb449b", Component.options)
   }
 })()}
 
@@ -31829,7 +31879,7 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-3dffcbe9", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-2fdb449b", module.exports)
   }
 }
 
@@ -31839,7 +31889,7 @@ if (false) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {/*!
- * Vue.js v2.3.3
+ * Vue.js v2.3.2
  * (c) 2014-2017 Evan You
  * Released under the MIT License.
  */
@@ -31861,9 +31911,6 @@ function isTrue (v) {
   return v === true
 }
 
-function isFalse (v) {
-  return v === false
-}
 /**
  * Check if value is primitive
  */
@@ -33259,8 +33306,7 @@ function getPropDefaultValue (vm, prop, key) {
   // return previous default value to avoid unnecessary watcher trigger
   if (vm && vm.$options.propsData &&
     vm.$options.propsData[key] === undefined &&
-    vm._props[key] !== undefined
-  ) {
+    vm._props[key] !== undefined) {
     return vm._props[key]
   }
   // call factory function for non-Function types
@@ -33534,7 +33580,6 @@ function cloneVNode (vnode) {
   cloned.ns = vnode.ns;
   cloned.isStatic = vnode.isStatic;
   cloned.key = vnode.key;
-  cloned.isComment = vnode.isComment;
   cloned.isCloned = true;
   return cloned
 }
@@ -33753,10 +33798,6 @@ function normalizeChildren (children) {
       : undefined
 }
 
-function isTextNode (node) {
-  return isDef(node) && isDef(node.text) && isFalse(node.isComment)
-}
-
 function normalizeArrayChildren (children, nestedIndex) {
   var res = [];
   var i, c, last;
@@ -33768,25 +33809,18 @@ function normalizeArrayChildren (children, nestedIndex) {
     if (Array.isArray(c)) {
       res.push.apply(res, normalizeArrayChildren(c, ((nestedIndex || '') + "_" + i)));
     } else if (isPrimitive(c)) {
-      if (isTextNode(last)) {
-        // merge adjacent text nodes
-        // this is necessary for SSR hydration because text nodes are
-        // essentially merged when rendered to HTML strings
-        (last).text += String(c);
+      if (isDef(last) && isDef(last.text)) {
+        last.text += String(c);
       } else if (c !== '') {
         // convert primitive to vnode
         res.push(createTextVNode(c));
       }
     } else {
-      if (isTextNode(c) && isTextNode(last)) {
-        // merge adjacent text nodes
+      if (isDef(c.text) && isDef(last) && isDef(last.text)) {
         res[res.length - 1] = createTextVNode(last.text + c.text);
       } else {
         // default key for nested array children (likely generated by v-for)
-        if (isTrue(children._isVList) &&
-          isDef(c.tag) &&
-          isUndef(c.key) &&
-          isDef(nestedIndex)) {
+        if (isDef(c.tag) && isUndef(c.key) && isDef(nestedIndex)) {
           c.key = "__vlist" + nestedIndex + "_" + i + "__";
         }
         res.push(c);
@@ -33886,13 +33920,11 @@ function resolveAsyncComponent (
 
         if (isDef(res.timeout)) {
           setTimeout(function () {
-            if (isUndef(factory.resolved)) {
-              reject(
-                 true
-                  ? ("timeout (" + (res.timeout) + "ms)")
-                  : null
-              );
-            }
+            reject(
+               true
+                ? ("timeout (" + (res.timeout) + "ms)")
+                : null
+            );
           }, res.timeout);
         }
       }
@@ -34071,8 +34103,7 @@ function resolveSlots (
     // named slots should only be respected if the vnode was rendered in the
     // same context.
     if ((child.context === context || child.functionalContext === context) &&
-      child.data && child.data.slot != null
-    ) {
+        child.data && child.data.slot != null) {
       var name = child.data.slot;
       var slot = (slots[name] || (slots[name] = []));
       if (child.tag === 'template') {
@@ -34096,16 +34127,11 @@ function isWhitespace (node) {
 }
 
 function resolveScopedSlots (
-  fns, // see flow/vnode
-  res
+  fns
 ) {
-  res = res || {};
+  var res = {};
   for (var i = 0; i < fns.length; i++) {
-    if (Array.isArray(fns[i])) {
-      resolveScopedSlots(fns[i], res);
-    } else {
-      res[fns[i].key] = fns[i].fn;
-    }
+    res[fns[i][0]] = fns[i][1];
   }
   return res
 }
@@ -34423,7 +34449,7 @@ var index = 0;
  * Reset the scheduler's state.
  */
 function resetSchedulerState () {
-  index = queue.length = activatedChildren.length = 0;
+  queue.length = activatedChildren.length = 0;
   has = {};
   if (true) {
     circular = {};
@@ -34533,10 +34559,10 @@ function queueWatcher (watcher) {
       // if already flushing, splice the watcher based on its id
       // if already past its id, it will be run next immediately.
       var i = queue.length - 1;
-      while (i > index && queue[i].id > watcher.id) {
+      while (i >= 0 && queue[i].id > watcher.id) {
         i--;
       }
-      queue.splice(i + 1, 0, watcher);
+      queue.splice(Math.max(i, index) + 1, 0, watcher);
     }
     // queue the flush
     if (!waiting) {
@@ -35439,8 +35465,7 @@ function _createElement (
   }
   // support single function children as default scoped slot
   if (Array.isArray(children) &&
-    typeof children[0] === 'function'
-  ) {
+      typeof children[0] === 'function') {
     data = data || {};
     data.scopedSlots = { default: children[0] };
     children.length = 0;
@@ -35527,9 +35552,6 @@ function renderList (
       key = keys[i];
       ret[i] = render(val[key], key, i);
     }
-  }
-  if (isDef(ret)) {
-    (ret)._isVList = true;
   }
   return ret
 }
@@ -35930,8 +35952,7 @@ function dedupe (latest, extended, sealed) {
 
 function Vue$3 (options) {
   if ("development" !== 'production' &&
-    !(this instanceof Vue$3)
-  ) {
+    !(this instanceof Vue$3)) {
     warn('Vue is a constructor and should be called with the `new` keyword');
   }
   this._init(options);
@@ -35949,7 +35970,7 @@ function initUse (Vue) {
   Vue.use = function (plugin) {
     /* istanbul ignore if */
     if (plugin.installed) {
-      return this
+      return
     }
     // additional parameters
     var args = toArray(arguments, 1);
@@ -35969,7 +35990,6 @@ function initUse (Vue) {
 function initMixin$1 (Vue) {
   Vue.mixin = function (mixin) {
     this.options = mergeOptions(this.options, mixin);
-    return this
   };
 }
 
@@ -36263,12 +36283,11 @@ Object.defineProperty(Vue$3.prototype, '$isServer', {
 
 Object.defineProperty(Vue$3.prototype, '$ssrContext', {
   get: function get () {
-    /* istanbul ignore next */
     return this.$vnode.ssrContext
   }
 });
 
-Vue$3.version = '2.3.3';
+Vue$3.version = '2.3.2';
 
 /*  */
 
@@ -36849,9 +36868,8 @@ function createPatchFunction (backend) {
     }
     // for slot content they should also get the scopeId from the host instance.
     if (isDef(i = activeInstance) &&
-      i !== vnode.context &&
-      isDef(i = i.$options._scopeId)
-    ) {
+        i !== vnode.context &&
+        isDef(i = i.$options._scopeId)) {
       nodeOps.setAttribute(vnode.elm, i, '');
     }
   }
@@ -37003,10 +37021,9 @@ function createPatchFunction (backend) {
     // if the new node is not cloned it means the render functions have been
     // reset by the hot-reload-api and we need to do a proper re-render.
     if (isTrue(vnode.isStatic) &&
-      isTrue(oldVnode.isStatic) &&
-      vnode.key === oldVnode.key &&
-      (isTrue(vnode.isCloned) || isTrue(vnode.isOnce))
-    ) {
+        isTrue(oldVnode.isStatic) &&
+        vnode.key === oldVnode.key &&
+        (isTrue(vnode.isCloned) || isTrue(vnode.isOnce))) {
       vnode.elm = oldVnode.elm;
       vnode.componentInstance = oldVnode.componentInstance;
       return
@@ -37097,9 +37114,8 @@ function createPatchFunction (backend) {
           // longer than the virtual children list.
           if (!childrenMatch || childNode) {
             if ("development" !== 'production' &&
-              typeof console !== 'undefined' &&
-              !bailed
-            ) {
+                typeof console !== 'undefined' &&
+                !bailed) {
               bailed = true;
               console.warn('Parent: ', elm);
               console.warn('Mismatching childNodes vs. VNodes: ', elm.childNodes, children);
@@ -38236,8 +38252,7 @@ function updateStyle (oldVnode, vnode) {
   var oldData = oldVnode.data;
 
   if (isUndef(data.staticStyle) && isUndef(data.style) &&
-    isUndef(oldData.staticStyle) && isUndef(oldData.style)
-  ) {
+      isUndef(oldData.staticStyle) && isUndef(oldData.style)) {
     return
   }
 
@@ -38375,14 +38390,12 @@ var animationEndEvent = 'animationend';
 if (hasTransition) {
   /* istanbul ignore if */
   if (window.ontransitionend === undefined &&
-    window.onwebkittransitionend !== undefined
-  ) {
+    window.onwebkittransitionend !== undefined) {
     transitionProp = 'WebkitTransition';
     transitionEndEvent = 'webkitTransitionEnd';
   }
   if (window.onanimationend === undefined &&
-    window.onwebkitanimationend !== undefined
-  ) {
+    window.onwebkitanimationend !== undefined) {
     animationProp = 'WebkitAnimation';
     animationEndEvent = 'webkitAnimationEnd';
   }
@@ -38622,9 +38635,8 @@ function enter (vnode, toggleDisplay) {
       var parent = el.parentNode;
       var pendingNode = parent && parent._pending && parent._pending[vnode.key];
       if (pendingNode &&
-        pendingNode.tag === vnode.tag &&
-        pendingNode.elm._leaveCb
-      ) {
+          pendingNode.tag === vnode.tag &&
+          pendingNode.elm._leaveCb) {
         pendingNode.elm._leaveCb();
       }
       enterHook && enterHook(el, cb);
@@ -38957,8 +38969,6 @@ function onCompositionStart (e) {
 }
 
 function onCompositionEnd (e) {
-  // prevent triggering an input event for no reason
-  if (!e.target.composing) { return }
   e.target.composing = false;
   trigger(e.target, 'input');
 }
@@ -39141,8 +39151,7 @@ var Transition = {
 
     // warn invalid mode
     if ("development" !== 'production' &&
-      mode && mode !== 'in-out' && mode !== 'out-in'
-    ) {
+        mode && mode !== 'in-out' && mode !== 'out-in') {
       warn(
         'invalid <transition> mode: ' + mode,
         this.$parent
@@ -39426,9 +39435,8 @@ setTimeout(function () {
     }
   }
   if ("development" !== 'production' &&
-    config.productionTip !== false &&
-    inBrowser && typeof console !== 'undefined'
-  ) {
+      config.productionTip !== false &&
+      inBrowser && typeof console !== 'undefined') {
     console[console.info ? 'info' : 'log'](
       "You are running Vue in development mode.\n" +
       "Make sure to turn on production mode when deploying for production.\n" +
@@ -39761,9 +39769,8 @@ function parseHTML (html, options) {
       // Close all the open elements, up the stack
       for (var i = stack.length - 1; i >= pos; i--) {
         if ("development" !== 'production' &&
-          (i > pos || !tagName) &&
-          options.warn
-        ) {
+            (i > pos || !tagName) &&
+            options.warn) {
           options.warn(
             ("tag <" + (stack[i].tag) + "> has no matching end tag.")
           );
@@ -40058,9 +40065,8 @@ function parse (
       // IE textarea placeholder bug
       /* istanbul ignore if */
       if (isIE &&
-        currentParent.tag === 'textarea' &&
-        currentParent.attrsMap.placeholder === text
-      ) {
+          currentParent.tag === 'textarea' &&
+          currentParent.attrsMap.placeholder === text) {
         return
       }
       var children = currentParent.children;
@@ -40564,17 +40570,17 @@ var modifierCode = {
 
 function genHandlers (
   events,
-  isNative,
+  native,
   warn
 ) {
-  var res = isNative ? 'nativeOn:{' : 'on:{';
+  var res = native ? 'nativeOn:{' : 'on:{';
   for (var name in events) {
     var handler = events[name];
     // #5330: warn click.right, since right clicks do not actually fire click events.
     if ("development" !== 'production' &&
-      name === 'click' &&
-      handler && handler.modifiers && handler.modifiers.right
-    ) {
+        name === 'click' &&
+        handler && handler.modifiers && handler.modifiers.right
+      ) {
       warn(
         "Use \"contextmenu\" instead of \"click.right\" since right clicks " +
         "do not actually fire \"click\" events."
@@ -40929,25 +40935,10 @@ function genScopedSlots (slots) {
 }
 
 function genScopedSlot (key, el) {
-  if (el.for && !el.forProcessed) {
-    return genForScopedSlot(key, el)
-  }
-  return "{key:" + key + ",fn:function(" + (String(el.attrsMap.scope)) + "){" +
+  return "[" + key + ",function(" + (String(el.attrsMap.scope)) + "){" +
     "return " + (el.tag === 'template'
       ? genChildren(el) || 'void 0'
-      : genElement(el)) + "}}"
-}
-
-function genForScopedSlot (key, el) {
-  var exp = el.for;
-  var alias = el.alias;
-  var iterator1 = el.iterator1 ? ("," + (el.iterator1)) : '';
-  var iterator2 = el.iterator2 ? ("," + (el.iterator2)) : '';
-  el.forProcessed = true; // avoid recursion
-  return "_l((" + exp + ")," +
-    "function(" + alias + iterator1 + iterator2 + "){" +
-      "return " + (genScopedSlot(key, el)) +
-    '})'
+      : genElement(el)) + "}]"
 }
 
 function genChildren (el, checkSkip) {
@@ -40956,10 +40947,9 @@ function genChildren (el, checkSkip) {
     var el$1 = children[0];
     // optimize single v-for
     if (children.length === 1 &&
-      el$1.for &&
-      el$1.tag !== 'template' &&
-      el$1.tag !== 'slot'
-    ) {
+        el$1.for &&
+        el$1.tag !== 'template' &&
+        el$1.tag !== 'slot') {
       return genElement(el$1)
     }
     var normalizationType = checkSkip ? getNormalizationType(children) : 0;

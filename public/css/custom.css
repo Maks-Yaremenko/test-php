@@ -15,3 +15,16 @@
 .inline-block {
 	display: inline-block;
 }
+
+
+.target {
+	display: block;
+}
+
+.target.input-group .form-control:nth-child(2) {
+	border-radius: 4px;
+}
+
+.target .input-group-btn { 
+	display : none;
+}

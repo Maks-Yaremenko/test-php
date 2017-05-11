@@ -42,11 +42,16 @@
                 <tbody>
 
                     <tr>
-                        <td>
-                            <input type="hidden" name="ingredient[0][id]" class="form-control ingredient-id">
-                            <input type="text" name="ingredient[0][name]" class="form-control ingredient-name">
+                        <td class="col-sm-6">
+                            <div class="input-group target">
+                                <input type="hidden" name="ingredient[0][id]" class="form-control ingredient-id">
+                                <input type="text" class="form-control ingredient-name">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default add-ingredient" >Add</button>
+                                </span>
+                            </div>
                         </td>
-                        <td>
+                        <td class="col-sm-6">
                             <input type="text" name="ingredient[0][amount]" class="form-control ingredient-amount">
                         </td>
                     </tr>

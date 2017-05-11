@@ -19,12 +19,18 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/recipe', 'RecipeController@all');
-Route::get('/recipe/new', 'RecipeController@make');
-Route::post('/recipe/new', 'RecipeController@create');
-Route::delete('/recipe/{recipe}', 'RecipeController@delete');
 
-Route::get('/ingredient', 'IngredientController@all');
-Route::get('/ingredient/autocomplete', 'IngredientController@autocomplete');
-Route::post('/ingredient', 'IngredientController@create');
-Route::delete('/ingredient/{ingredient}', 'IngredientController@delete');
+Route::group(['prefix' => 'recipe'], function(){
+	Route::get('', 'RecipeController@all');
+	Route::get('/new', 'RecipeController@make');
+	Route::post('/new', 'RecipeController@create');
+	Route::delete('/{recipe}', 'RecipeController@delete');
+});
+
+Route::group(['prefix' => 'ingredient'], function(){
+	Route::get('', 'IngredientController@all');
+	Route::get('/autocomplete', 'IngredientController@autocomplete');
+	Route::post('', 'IngredientController@create');
+	Route::post('/ajax', 'IngredientController@ajaxCreate');
+	Route::delete('/{ingredient}', 'IngredientController@delete');
+});

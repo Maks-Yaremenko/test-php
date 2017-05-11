@@ -67,6 +67,33 @@ class IngredientController extends Controller
     // создание задачи
     }
 
+    /**
+     * Create new ingredient.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function ajaxCreate(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:20',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('/ingredient')
+                ->withInput()
+                ->withErrors($validator);
+        }
+
+        $ingredient = new Ingredient;
+        $ingredient->name = $request->name;
+        $ingredient->save();
+
+        return response($ingredient);
+
+    // создание задачи
+    }
+
      /**
      * Delete existing ingredient.
      *
