@@ -21,6 +21,8 @@ class Recipe extends Model
     */
     public function ingredients()
     {
-        return $this->belongsToMany('App\Ingredient', 'ingredient_recipe', 'recipe_id', 'ingredient_id')->withTimestamps();
+        return $this->belongsToMany('App\Ingredient', 'ingredient_recipe', 'recipe_id', 'ingredient_id')
+                ->withPivot('amount')
+                ->withTimestamps();
     }
 }

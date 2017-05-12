@@ -61,9 +61,9 @@
                             {{ csrf_field() }}
                             {{ method_field('DELETE') }}
 
-                            <button type="submit" class="btn btn-link">
+                            <a class="btn btn-link">
                                 <i class="material-icons">edit</i>
-                            </button>
+                            </a>
                             <button type="submit" class="btn btn-link">
                                 <i class="material-icons">delete</i>
                             </button>

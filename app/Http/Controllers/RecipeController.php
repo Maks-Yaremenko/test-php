@@ -22,6 +22,16 @@ class RecipeController extends Controller
         ]);
     }
 
+     /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Recipe $recipe)
+    {
+        return view('recipe/recipe-show', ['recipe' => $recipe, 'ingredients' => $recipe->ingredients]);
+    }
+
     /**
      * Show the application dashboard.
      *
@@ -57,7 +67,7 @@ class RecipeController extends Controller
 
         foreach($request->ingredient as $value){
             if(is_null($value['id'])) { continue; }
-            $recipe ->ingredients()->attach($recipe->id, array('ingredient_id' => $value['id'], 'amount' => $value['amount']));
+            $recipe->ingredients()->attach($recipe->id, array('ingredient_id' => $value['id'], 'amount' => $value['amount']));
         };
 
         return redirect('/recipe');

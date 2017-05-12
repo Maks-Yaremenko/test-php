@@ -32,6 +32,5 @@ Route::group(['prefix' => 'ingredient'], function(){
 	Route::get('', 'IngredientController@all');
 	Route::get('/autocomplete', 'IngredientController@autocomplete');
 	Route::post('', 'IngredientController@create');
-	Route::post('/ajax', 'IngredientController@ajaxCreate');
 	Route::delete('/{ingredient}', 'IngredientController@delete');
 });

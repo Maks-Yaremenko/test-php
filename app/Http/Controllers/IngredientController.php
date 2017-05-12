@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Request;
 use App\Ingredient;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class IngredientController extends Controller
@@ -27,7 +27,7 @@ class IngredientController extends Controller
      */
     public function autocomplete(Request $request)
     {
-        $ingredients = Ingredient::where('name', 'like', '%'.$request->get('term').'%')
+        $ingredients = Ingredient::where('name', 'like', '%'.Request::get('term').'%')
         ->orderBy('id', 'desc')
         ->take(5)
         ->get();
@@ -48,7 +48,7 @@ class IngredientController extends Controller
      */
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(Request::all(), [
             'name' => 'required|max:20',
         ]);
 
@@ -59,37 +59,16 @@ class IngredientController extends Controller
         }
 
         $ingredient = new Ingredient;
-        $ingredient->name = $request->name;
+        $ingredient->name = Request::instance()->name;
         $ingredient->save();
+
+        if (Request::ajax())
+        {
+            return response($ingredient);
+        }
 
         return redirect('/ingredient');
-
-    // создание задачи
-    }
-
-    /**
-     * Create new ingredient.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function ajaxCreate(Request $request)
-    {
-
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:20',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect('/ingredient')
-                ->withInput()
-                ->withErrors($validator);
-        }
-
-        $ingredient = new Ingredient;
-        $ingredient->name = $request->name;
-        $ingredient->save();
-
-        return response($ingredient);
+        
     }
 
      /**

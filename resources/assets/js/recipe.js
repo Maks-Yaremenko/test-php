@@ -106,7 +106,7 @@ var field = {
 
 			$.ajax({
 				type: 'POST',
-				url: '/ingredient/ajax',
+				url: '/ingredient',
 				data: {"name": newIngredient },
 				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
 				success: function(data) {

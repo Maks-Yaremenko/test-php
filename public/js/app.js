@@ -802,6 +802,17 @@ $(document).ready(function () {
 	field.initAutocomplete();
 	field.initActiveField();
 	field.initStoreIngredient();
+
+	$('#submit').on('click', function () {
+		$.ajax({
+			type: 'POST',
+			url: '/recipe/new',
+			data: $("#recipe").serialize(),
+			success: function success(data) {
+				location.href = '/recipe';
+			}
+		});
+	});
 });
 
 $('#add-field').on('click', function () {
@@ -817,17 +828,6 @@ $('#add-field').on('click', function () {
 	field.initAutocomplete();
 	field.initActiveField();
 	field.initStoreIngredient();
-});
-
-$('#submit').on('click', function () {
-	$.ajax({
-		type: 'POST',
-		url: '/recipe/new',
-		data: $("#recipe").serialize(),
-		success: function success(data) {
-			//location.reload();
-		}
-	});
 });
 
 var field = {
@@ -904,11 +904,10 @@ var field = {
 
 			$.ajax({
 				type: 'POST',
-				url: '/ingredient/ajax',
+				url: '/ingredient',
 				data: { "name": newIngredient },
 				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
 				success: function success(data) {
-					console.log('data', data);
 					$(self).parent().siblings('.ingredient-id').val(data.id);
 					parent.hideButtonAfterStoreIngredient();
 				}
