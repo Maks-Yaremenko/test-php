@@ -11,7 +11,7 @@
 
 <!-- Bootstrap шаблон... -->
 
-<div class="col-md-9">
+<div class="col-md-9 main-content">
     <!-- Отображение ошибок проверки ввода -->
     @include('common.errors') 
     <!-- Форма новой задачи -->

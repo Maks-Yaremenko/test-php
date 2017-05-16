@@ -793,23 +793,37 @@ var app = new Vue({
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Services_field__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Services_utils__ = __webpack_require__(50);
+
+
+
 
 
 $(document).ready(function () {
-	field.initAutocomplete();
-	field.initActiveField();
-	field.initStoreIngredient();
+	__WEBPACK_IMPORTED_MODULE_0__Services_field__["a" /* field */].initAutocomplete();
+	__WEBPACK_IMPORTED_MODULE_0__Services_field__["a" /* field */].initActiveField();
+	__WEBPACK_IMPORTED_MODULE_0__Services_field__["a" /* field */].initStoreIngredient();
 
 	$('#submit').on('click', function () {
 		$.ajax({
 			type: 'POST',
 			url: '/recipe/new',
 			data: $("#recipe").serialize(),
+			beforeSend: function beforeSend() {
+				$(".alert-danger").remove();
+			},
 			success: function success(data) {
-				location.href = '/recipe';
+				if (!data.error) {
+					location.href = '/recipe';
+				}
+
+				__WEBPACK_IMPORTED_MODULE_1__Services_utils__["a" /* utils */].displayError('.main-content', data.error.name);
+				$('#recipe')[0].reset();
 			}
 		});
 	});
@@ -819,102 +833,16 @@ $('#add-field').on('click', function () {
 
 	var row = $('#ingredients>tbody>tr').clone();
 
-	field.cleanElement(row, '.ingredient-id');
-	field.cleanElement(row, '.ingredient-name');
-	field.cleanElement(row, '.ingredient-amount');
+	__WEBPACK_IMPORTED_MODULE_0__Services_field__["a" /* field */].cleanElement(row, '.ingredient-id');
+	__WEBPACK_IMPORTED_MODULE_0__Services_field__["a" /* field */].cleanElement(row, '.ingredient-name');
+	__WEBPACK_IMPORTED_MODULE_0__Services_field__["a" /* field */].cleanElement(row, '.ingredient-amount');
 
 	$('#ingredients>tbody').append(row[0]);
 
-	field.initAutocomplete();
-	field.initActiveField();
-	field.initStoreIngredient();
+	__WEBPACK_IMPORTED_MODULE_0__Services_field__["a" /* field */].initAutocomplete();
+	__WEBPACK_IMPORTED_MODULE_0__Services_field__["a" /* field */].initActiveField();
+	__WEBPACK_IMPORTED_MODULE_0__Services_field__["a" /* field */].initStoreIngredient();
 });
-
-var field = {
-
-	counter: 1,
-
-	cleanElement: function cleanElement(target, className) {
-		$(target).find(className).val('').attr('name', 'ingredient[' + this.counter + '][' + className.split('-')[1] + ']');
-		if (className.split('-')[1] === 'amount') {
-			this.counter++;
-		}
-	},
-
-	showAddButton: function showAddButton() {
-		$('.target.active').css('display', 'table');
-		$('.target.active > input').css({ 'border-radius': '4px 0 0 4px' });
-		$('.target.active .input-group-btn').css('display', 'table-cell');
-		$('#add-field').attr('disabled', '');
-	},
-
-	hideAddButton: function hideAddButton() {
-		$('.target.active').css({ 'display': 'block' });
-		$('.target.active > input').css({ 'border-radius': '4px' });
-		$('.target.active .input-group-btn').css({ 'display': 'none' });
-		$('#add-field').removeAttr('disabled');
-	},
-
-	hideButtonAfterStoreIngredient: function hideButtonAfterStoreIngredient() {
-		$('.target').css({ 'display': 'block' });
-		$('.target > input').css({ 'border-radius': '4px' });
-		$('.target .input-group-btn').css({ 'display': 'none' });
-		$('#add-field').removeAttr('disabled');
-	},
-
-	initAutocomplete: function initAutocomplete() {
-
-		var self = this;
-
-		$('.ingredient-name').on('focus', function () {
-			$(this).autocomplete({
-				source: '/ingredient/autocomplete',
-				minLength: 3,
-				select: function select(event, ui) {
-
-					$(this).val(ui.item.value);
-					$(this).siblings().val(ui.item.id);
-				},
-				response: function response(event, ui) {
-					if (ui.content.length) {
-						self.hideAddButton();
-						return false;
-					}
-
-					self.showAddButton();
-				}
-			});
-		});
-	},
-
-	initActiveField: function initActiveField() {
-		$('.ingredient-name').on('focus', function () {
-			$(this).parent().addClass('active');
-		}).on('blur', function () {
-			$(this).parent().removeClass('active');
-		});
-	},
-
-	initStoreIngredient: function initStoreIngredient() {
-		var parent = this;
-
-		$('.add-ingredient').on('click', function () {
-			var self = this;
-			var newIngredient = $(this).parent().siblings('.ingredient-name').val();
-
-			$.ajax({
-				type: 'POST',
-				url: '/ingredient',
-				data: { "name": newIngredient },
-				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-				success: function success(data) {
-					$(self).parent().siblings('.ingredient-id').val(data.id);
-					parent.hideButtonAfterStoreIngredient();
-				}
-			});
-		});
-	}
-};
 
 /***/ }),
 /* 10 */
@@ -41555,6 +41483,126 @@ module.exports = function(module) {
 __webpack_require__(8);
 __webpack_require__(9);
 module.exports = __webpack_require__(10);
+
+
+/***/ }),
+/* 41 */,
+/* 42 */,
+/* 43 */,
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */,
+/* 49 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return field; });
+
+
+var field = {
+
+	counter: 1,
+
+	cleanElement: function cleanElement(target, className) {
+		$(target).find(className).val('').attr('name', 'ingredient[' + this.counter + '][' + className.split('-')[1] + ']');
+		if (className.split('-')[1] === 'amount') {
+			this.counter++;
+		}
+	},
+
+	showAddButton: function showAddButton() {
+		$('.target.active').css('display', 'table');
+		$('.target.active > input').css({ 'border-radius': '4px 0 0 4px' });
+		$('.target.active .input-group-btn').css('display', 'table-cell');
+		$('#add-field').attr('disabled', '');
+	},
+
+	hideAddButton: function hideAddButton() {
+		$('.target.active').css({ 'display': 'block' });
+		$('.target.active > input').css({ 'border-radius': '4px' });
+		$('.target.active .input-group-btn').css({ 'display': 'none' });
+		$('#add-field').removeAttr('disabled');
+	},
+
+	hideButtonAfterStoreIngredient: function hideButtonAfterStoreIngredient() {
+		$('.target').css({ 'display': 'block' });
+		$('.target > input').css({ 'border-radius': '4px' });
+		$('.target .input-group-btn').css({ 'display': 'none' });
+		$('#add-field').removeAttr('disabled');
+	},
+
+	initAutocomplete: function initAutocomplete() {
+
+		var self = this;
+
+		$('.ingredient-name').on('focus', function () {
+			$(this).autocomplete({
+				source: '/ingredient/autocomplete',
+				minLength: 3,
+				select: function select(event, ui) {
+
+					$(this).val(ui.item.value);
+					$(this).siblings().val(ui.item.id);
+				},
+				response: function response(event, ui) {
+					if (ui.content.length) {
+						self.hideAddButton();
+						return false;
+					}
+
+					self.showAddButton();
+				}
+			});
+		});
+	},
+
+	initActiveField: function initActiveField() {
+		$('.ingredient-name').on('focus', function () {
+			$(this).parent().addClass('active');
+		}).on('blur', function () {
+			$(this).parent().removeClass('active');
+		});
+	},
+
+	initStoreIngredient: function initStoreIngredient() {
+		var parent = this;
+
+		$('.add-ingredient').on('click', function () {
+			var self = this;
+			var newIngredient = $(this).parent().siblings('.ingredient-name').val();
+
+			$.ajax({
+				type: 'POST',
+				url: '/ingredient',
+				data: { "name": newIngredient },
+				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+				success: function success(data) {
+					$(self).parent().siblings('.ingredient-id').val(data.id);
+					parent.hideButtonAfterStoreIngredient();
+				}
+			});
+		});
+	}
+};
+
+
+
+/***/ }),
+/* 50 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return utils; });
+
+
+var utils = {
+	displayError: function displayError(element, message) {
+		$(element).prepend('<div class="alert alert-danger">\n\t\t\t\t\t\t<strong>\u0423\u043F\u0441! \u0427\u0442\u043E-\u0442\u043E \u043F\u043E\u0448\u043B\u043E \u043D\u0435 \u0442\u0430\u043A!</strong><br><br>\n\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t<li>' + message + '</li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</div>');
+	}
+};
+
 
 
 /***/ })

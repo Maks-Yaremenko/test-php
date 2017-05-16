@@ -55,9 +55,7 @@ class RecipeController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect('/recipe')
-                ->withInput()
-                ->withErrors($validator);
+            return response()->json(['error' => $validator->errors()]);
         }
         
         $recipe = new Recipe;
