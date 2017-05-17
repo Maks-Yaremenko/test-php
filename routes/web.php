@@ -19,7 +19,6 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-
 Route::group(['prefix' => 'recipe'], function(){
 	Route::get('', 'RecipeController@all');
 	Route::get('/new', 'RecipeController@make');
