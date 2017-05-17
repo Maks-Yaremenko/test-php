@@ -41,6 +41,8 @@ class MySqlDump extends Command
     {
         $ds = DIRECTORY_SEPARATOR;
         $table = '';
+        $user = $_ENV['DB_USERNAME'];
+        $password = $_ENV['DB_PASSWORD'];
         $database = $_ENV['DB_DATABASE'];
 
         $param = $this->ask('Provide `table name` or `--all` to dump full database');
@@ -59,14 +61,21 @@ class MySqlDump extends Command
         $path = database_path() . $ds . 'backups' . $ds . date('Y-m-d') . $ds;
         $file = date('Y-m-d') . '_' .$database. '_' .$table .'.sql';
 
-        $command = "mysqldump -u root $database $table >". $path . $file;
+        $command = "mysqldump -u $user -p $password $database $table >". $path . $file;
 
         if (!is_dir($path)) 
         { 
             mkdir($path, 0755, true); 
         }
 
-        exec($command);
-        echo 'Job is done.';
+        exec($command, $output, $fail);
+
+        if (!$fail)
+        {
+            $this->info('Job is done.');
+            exit;
+        }
+
+        $this->error('Something went wrong!');
     }
 }
