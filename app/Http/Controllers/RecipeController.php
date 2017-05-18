@@ -50,14 +50,11 @@ class RecipeController extends Controller
     public function create(Request $request)
     {
 
-        $validator = Validator::make($request->all(), [
+        $this->validate($request, [
             'name' => 'required|max:20',
+            'description' => 'required|max:255',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()]);
-        }
-        
         $recipe = new Recipe;
         $recipe->name = $request->name;
         $recipe->description = $request->description;

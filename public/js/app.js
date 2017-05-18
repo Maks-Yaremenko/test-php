@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 40);
+/******/ 	return __webpack_require__(__webpack_require__.s = 42);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -471,7 +471,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(34)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(36)))
 
 /***/ }),
 /* 2 */
@@ -775,9 +775,9 @@ module.exports = g;
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-__webpack_require__(30);
+__webpack_require__(32);
 
-window.Vue = __webpack_require__(38);
+window.Vue = __webpack_require__(40);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -785,7 +785,7 @@ window.Vue = __webpack_require__(38);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example', __webpack_require__(35));
+Vue.component('example', __webpack_require__(37));
 
 var app = new Vue({
   el: '#app'
@@ -797,8 +797,8 @@ var app = new Vue({
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Services_field__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Services_utils__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Services_field__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Services_utils__ = __webpack_require__(31);
 
 
 
@@ -818,11 +818,10 @@ $(document).ready(function () {
 				$(".alert-danger").remove();
 			},
 			success: function success(data) {
-				if (!data.error) {
-					location.href = '/recipe';
-				}
-
-				__WEBPACK_IMPORTED_MODULE_1__Services_utils__["a" /* utils */].displayError('.main-content', data.error.name);
+				location.href = '/recipe';
+			},
+			error: function error(err) {
+				__WEBPACK_IMPORTED_MODULE_1__Services_utils__["a" /* utils */].displayError('.main-content', err.responseJSON);
 				$('#recipe')[0].reset();
 			}
 		});
@@ -1722,10 +1721,131 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /***/ }),
 /* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return field; });
+
+
+var field = {
+
+	counter: 1,
+
+	cleanElement: function cleanElement(target, className) {
+		$(target).find(className).val('').attr('name', 'ingredient[' + this.counter + '][' + className.split('-')[1] + ']');
+		if (className.split('-')[1] === 'amount') {
+			this.counter++;
+		}
+	},
+
+	showAddButton: function showAddButton() {
+		$('.target.active').css('display', 'table');
+		$('.target.active > input').css({ 'border-radius': '4px 0 0 4px' });
+		$('.target.active .input-group-btn').css('display', 'table-cell');
+		$('#add-field').attr('disabled', '');
+	},
+
+	hideAddButton: function hideAddButton() {
+		$('.target.active').css({ 'display': 'block' });
+		$('.target.active > input').css({ 'border-radius': '4px' });
+		$('.target.active .input-group-btn').css({ 'display': 'none' });
+		$('#add-field').removeAttr('disabled');
+	},
+
+	hideButtonAfterStoreIngredient: function hideButtonAfterStoreIngredient() {
+		$('.target').css({ 'display': 'block' });
+		$('.target > input').css({ 'border-radius': '4px' });
+		$('.target .input-group-btn').css({ 'display': 'none' });
+		$('#add-field').removeAttr('disabled');
+	},
+
+	initAutocomplete: function initAutocomplete() {
+
+		var self = this;
+
+		$('.ingredient-name').on('focus', function () {
+			$(this).autocomplete({
+				source: '/ingredient/autocomplete',
+				minLength: 3,
+				select: function select(event, ui) {
+
+					$(this).val(ui.item.value);
+					$(this).siblings().val(ui.item.id);
+				},
+				response: function response(event, ui) {
+					if (ui.content.length) {
+						self.hideAddButton();
+						return false;
+					}
+
+					self.showAddButton();
+				}
+			});
+		});
+	},
+
+	initActiveField: function initActiveField() {
+		$('.ingredient-name').on('focus', function () {
+			$(this).parent().addClass('active');
+		}).on('blur', function () {
+			$(this).parent().removeClass('active');
+		});
+	},
+
+	initStoreIngredient: function initStoreIngredient() {
+		var parent = this;
+
+		$('.add-ingredient').on('click', function () {
+			var self = this;
+			var newIngredient = $(this).parent().siblings('.ingredient-name').val();
+
+			$.ajax({
+				type: 'POST',
+				url: '/ingredient',
+				data: { "name": newIngredient },
+				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+				success: function success(data) {
+					$(self).parent().siblings('.ingredient-id').val(data.id);
+					parent.hideButtonAfterStoreIngredient();
+				}
+			});
+		});
+	}
+};
+
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return utils; });
+
+
+var utils = {
+	displayError: function displayError(element, data) {
+		var message = 'Упс! Что-то пошло не так!';
+		var output = '<div class="alert alert-danger"><strong>' + message + '</strong><br><br><ul>';
+
+		for (var key in data) {
+			output += '<li>' + key + ' : ' + data[key] + '</li>';
+		}
+
+		output += '</ul></div>';
+
+		$(element).prepend(output);
+	}
+};
+
+
+
+/***/ }),
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-window._ = __webpack_require__(33);
+window._ = __webpack_require__(35);
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -1734,9 +1854,9 @@ window._ = __webpack_require__(33);
  */
 
 try {
-  window.$ = window.jQuery = __webpack_require__(32);
+  window.$ = window.jQuery = __webpack_require__(34);
 
-  __webpack_require__(31);
+  __webpack_require__(33);
 } catch (e) {}
 
 /**
@@ -1766,7 +1886,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 // });
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports) {
 
 /*!
@@ -4149,7 +4269,7 @@ if (typeof jQuery === 'undefined') {
 
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -14409,7 +14529,7 @@ return jQuery;
 
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -31498,10 +31618,10 @@ return jQuery;
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(39)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(41)(module)))
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -31691,14 +31811,14 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Component = __webpack_require__(36)(
+var Component = __webpack_require__(38)(
   /* script */
   __webpack_require__(29),
   /* template */
-  __webpack_require__(37),
+  __webpack_require__(39),
   /* scopeId */
   null,
   /* cssModules */
@@ -31725,7 +31845,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports) {
 
 // this module is a runtime utility for cleaner component module output and will
@@ -31782,7 +31902,7 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -31811,7 +31931,7 @@ if (false) {
 }
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41449,7 +41569,7 @@ module.exports = Vue$3;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -41477,132 +41597,12 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(8);
 __webpack_require__(9);
 module.exports = __webpack_require__(10);
-
-
-/***/ }),
-/* 41 */,
-/* 42 */,
-/* 43 */,
-/* 44 */,
-/* 45 */,
-/* 46 */,
-/* 47 */,
-/* 48 */,
-/* 49 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return field; });
-
-
-var field = {
-
-	counter: 1,
-
-	cleanElement: function cleanElement(target, className) {
-		$(target).find(className).val('').attr('name', 'ingredient[' + this.counter + '][' + className.split('-')[1] + ']');
-		if (className.split('-')[1] === 'amount') {
-			this.counter++;
-		}
-	},
-
-	showAddButton: function showAddButton() {
-		$('.target.active').css('display', 'table');
-		$('.target.active > input').css({ 'border-radius': '4px 0 0 4px' });
-		$('.target.active .input-group-btn').css('display', 'table-cell');
-		$('#add-field').attr('disabled', '');
-	},
-
-	hideAddButton: function hideAddButton() {
-		$('.target.active').css({ 'display': 'block' });
-		$('.target.active > input').css({ 'border-radius': '4px' });
-		$('.target.active .input-group-btn').css({ 'display': 'none' });
-		$('#add-field').removeAttr('disabled');
-	},
-
-	hideButtonAfterStoreIngredient: function hideButtonAfterStoreIngredient() {
-		$('.target').css({ 'display': 'block' });
-		$('.target > input').css({ 'border-radius': '4px' });
-		$('.target .input-group-btn').css({ 'display': 'none' });
-		$('#add-field').removeAttr('disabled');
-	},
-
-	initAutocomplete: function initAutocomplete() {
-
-		var self = this;
-
-		$('.ingredient-name').on('focus', function () {
-			$(this).autocomplete({
-				source: '/ingredient/autocomplete',
-				minLength: 3,
-				select: function select(event, ui) {
-
-					$(this).val(ui.item.value);
-					$(this).siblings().val(ui.item.id);
-				},
-				response: function response(event, ui) {
-					if (ui.content.length) {
-						self.hideAddButton();
-						return false;
-					}
-
-					self.showAddButton();
-				}
-			});
-		});
-	},
-
-	initActiveField: function initActiveField() {
-		$('.ingredient-name').on('focus', function () {
-			$(this).parent().addClass('active');
-		}).on('blur', function () {
-			$(this).parent().removeClass('active');
-		});
-	},
-
-	initStoreIngredient: function initStoreIngredient() {
-		var parent = this;
-
-		$('.add-ingredient').on('click', function () {
-			var self = this;
-			var newIngredient = $(this).parent().siblings('.ingredient-name').val();
-
-			$.ajax({
-				type: 'POST',
-				url: '/ingredient',
-				data: { "name": newIngredient },
-				headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-				success: function success(data) {
-					$(self).parent().siblings('.ingredient-id').val(data.id);
-					parent.hideButtonAfterStoreIngredient();
-				}
-			});
-		});
-	}
-};
-
-
-
-/***/ }),
-/* 50 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return utils; });
-
-
-var utils = {
-	displayError: function displayError(element, message) {
-		$(element).prepend('<div class="alert alert-danger">\n\t\t\t\t\t\t<strong>\u0423\u043F\u0441! \u0427\u0442\u043E-\u0442\u043E \u043F\u043E\u0448\u043B\u043E \u043D\u0435 \u0442\u0430\u043A!</strong><br><br>\n\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t<li>' + message + '</li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</div>');
-	}
-};
-
 
 
 /***/ })

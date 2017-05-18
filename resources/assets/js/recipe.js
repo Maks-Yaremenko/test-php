@@ -17,9 +17,10 @@ $(document).ready(function(){
 				$( ".alert-danger" ).remove();
 			},
 			success: function(data) {
-				if (!data.error) { location.href='/recipe'; }
-
-				utils.displayError('.main-content', data.error.name);
+				location.href='/recipe';
+		 	},
+		 	error: function(err) {
+		 		utils.displayError('.main-content', err.responseJSON);
 				$('#recipe')[0].reset();
 		 	}
 	 	});
