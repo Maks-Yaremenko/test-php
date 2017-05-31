@@ -23,6 +23,8 @@ Route::group(['prefix' => 'recipe'], function(){
 	Route::get('', 'RecipeController@all');
 	Route::get('/new', 'RecipeController@make');
 	Route::get('/show/{recipe}', 'RecipeController@show');
+	Route::get('/{id}', 'RecipeController@update');
+	Route::put('/{id}', 'RecipeController@update');
 	Route::post('/new', 'RecipeController@create');
 	Route::delete('/{recipe}', 'RecipeController@delete');
 });

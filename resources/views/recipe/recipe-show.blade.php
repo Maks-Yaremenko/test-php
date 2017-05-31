@@ -8,7 +8,8 @@
     <div class="col-md-9">
         <h2>
             {{ $recipe->name }}
-            <a class="btn btn-link"><i class="material-icons">edit</i></a>
+            <input type="hidden" id="recipe-id" value="{{ $recipe->id }}">
+            <a id="edit-recipe" class="btn btn-link" href="/recipe/{{ $recipe->id }}"><i class="material-icons">edit</i></a>
         </h2>
         <hr align="center" width="90%" color="gray"/>
         <div class="form-group row">
@@ -23,12 +24,12 @@
             <table id="ingredients" class="table table-striped table-hover">
                 <thead>
                     <th>Ingredient</th>
-                    <th>Amount</th> 
+                    <th>Amount</th>
                 </thead>
                 <tbody>
                 @foreach ($ingredients as $ingredient)
                     <tr>
-                        <td class="col-sm-6"><span>{{ $ingredient->name }}</span></td>
+                        <td id="{{$ingredient->id}}" class="col-sm-6"><span>{{ $ingredient->name }}</span></td>
                         <td class="col-sm-6"><span>{{ $ingredient->pivot->amount }}</span></td>
                     </tr>
                     @endforeach

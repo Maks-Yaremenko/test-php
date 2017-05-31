@@ -43,8 +43,8 @@
                             <a class="btn btn-link" href="{{ url('recipe/show/'.$recipe->id) }}">
                                 <i class="material-icons">visibility</i>
                             </a>
-                            <a class="btn btn-link" href="{{ url('recipe/new') }}">
-                                <i class="material-icons">exposure_plus_1</i>
+                            <a id="edit-recipe" class="btn btn-link" href="/recipe/{{ $recipe->id }}">
+                                <i class="material-icons">edit</i>
                             </a>
                             <form class="inline-block" action="{{ url('recipe/'.$recipe->id) }}" method="POST">
                                 {{ csrf_field() }}

@@ -1,11 +1,22 @@
 'use strict';
 
+import {utils} from "./utils";
+
 var field = {
 
-	counter: 1,
+	counter: 0,
 
 	cleanElement: function (target, className) {
-		$(target).find(className).val('').attr('name', 'ingredient['+this.counter+']['+className.split('-')[1]+']');
+
+		var param = (className === '.ingredient-id') ? 'ingredient_id' : className.split('-')[1];
+
+		if ($(target).find(className).is('span')) {
+			return $(target).find(className)
+				.replaceWith($('<input type="text" class="form-control ingredient-name"></input>'))
+				.attr('name', 'ingredient['+this.counter+']['+param+']');
+		}
+
+		$(target).find(className).val('').attr('name', 'ingredient['+this.counter+']['+param+']');
 		if (className.split('-')[1] === 'amount') { this.counter++; }
 	},
 
@@ -83,7 +94,41 @@ var field = {
 				}
 			});
 		});
+	},
+
+	initUpdateRecipe: function() {
+
+		$('#update-recipe').on('click', function() {
+
+			var id = $('#recipe-id').val();
+
+			$.ajax({
+				type: 'PUT',
+				url: `/recipe/${id}`,
+				data: $("#recipe").find(":input").filter(function () {
+            		return (($.trim(this.value).length > 0) && !$(this).hasClass('ingredient-name'))
+        		}).serialize(),
+				beforeSend:function() {
+					$( ".alert-danger" ).remove();
+				},
+				success: function(data) {
+					//location.href='/recipe/show/' + data.id;
+				},
+			 	error: function(err) {
+			 		utils.displayError('.main-content', err.responseJSON);
+			 	}
+			});
+		});
+
+	},
+
+	initDetachIngredient: function() {
+		$('.detach-ingredient').on('click', function(event) {
+			event.preventDefault();
+			$(this).parent().parent().remove();
+		})
 	}
+
 };
 
 export {field};

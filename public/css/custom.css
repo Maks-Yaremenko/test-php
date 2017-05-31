@@ -28,3 +28,7 @@
 .target .input-group-btn { 
 	display : none;
 }
+
+.row {
+    margin-bottom: 50px;
+}
